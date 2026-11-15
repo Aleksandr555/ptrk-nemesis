@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+        <!-- Підключення PWA маніфесту -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b57d0">
+
+    
+    <title>ПТРК - Nemesis</title>
+    <style>
+        :root {
+            --md-sys-color-background-1: #e0f2fe;
+            --md-sys-color-background-2: #1e3a8a;
+            --md-sys-color-surface: rgba(255, 255, 255, 0.88);
+            --md-sys-color-surface-container: rgba(240, 244, 249, 0.85);
+            --md-sys-color-primary: #0b57d0;
+            --md-sys-color-on-primary: #ffffff;
+            --md-sys-color-primary-container: #d3e3fd;
+            --md-sys-color-on-primary-container: #041e49;
+            --md-sys-color-outline: #74777f;
+            --md-sys-color-outline-variant: #c4c7c5;
+            --md-sys-color-on-surface: #1f1f1f;
+            --md-sys-color-on-surface-variant: #44474f;
+            --md-sys-color-error: #b3261e;
+            --md-sys-color-success: #146c2e;
+        }
+
+        [data-theme="dark"] {
+            --md-sys-color-background-1: #0f172a;
+            --md-sys-color-background-2: #020617;
+            --md-sys-color-surface: rgba(30, 30, 30, 0.9);
+            --md-sys-color-surface-container: rgba(43, 43, 43, 0.85);
+            --md-sys-color-primary: #a8c7fa;
+            --md-sys-color-on-primary: #062e6f;
+            --md-sys-color-primary-container: #0842a0;
+            --md-sys-color-on-primary-container: #d3e3fd;
+            --md-sys-color-outline: #8e918f;
+            --md-sys-color-outline-variant: #444746;
+            --md-sys-color-on-surface: #e3e3e3;
+            --md-sys-color-on-surface-variant: #c4c7c5;
+            --md-sys-color-error: #f2b8b5;
+            --md-sys-color-success: #81c995;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Google Sans', Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--md-sys-color-background-1) 0%, var(--md-sys-color-background-2) 100%);
+            background-attachment: fixed;
+            color: var(--md-sys-color-on-surface);
+            padding: 25px 16px 16px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background-color: var(--md-sys-color-surface);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: 40px 1fr 80px;
+            align-items: center;
+            margin-top: -15px;
+            margin-bottom: 20px;
+        }
+
+        .app-title {
+            font-size: 19px;
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .app-logo {
+            width: 75px;
+            height: 67.5px;
+            object-fit: contain;
+            justify-self: end;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        }
+
+        .theme-toggle {
+            background: var(--md-sys-color-surface-container);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--md-sys-color-on-surface);
+            font-size: 18px;
+            justify-self: start;
+        }
+
+        .content-body {
+            margin-top: -20px;
+        }
+
+        .section {
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 4px;
+        }
+
+        .row-inputs-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .row-inputs-3 > div {
+            min-width: 0;
+        }
+
+        .row-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .row-inputs > div {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .grid-3 > div {
+            min-width: 0;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 12px;
+            padding: 0 6px;
+            width: 100%;
+            height: 42px;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 0 5px;
+        }
+
+        .input-wrapper input {
+            border: none;
+            padding: 6px 0;
+            background: transparent;
+            width: 100%;
+            min-width: 0;
+            text-align: left;
+            font-size: 13px;
+            color: var(--md-sys-color-on-surface);
+            outline: none;
+        }
+
+        .speed-unit-select {
+            background: transparent;
+            border: none;
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--md-sys-color-primary);
+            cursor: pointer;
+            outline: none;
+            margin-left: 2px;
+            padding: 0 14px 0 0;
+            white-space: nowrap;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230b57d0' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0px center;
+            background-size: 10px;
+        }
+
+        .text-error {
+            color: var(--md-sys-color-error) !important;
+            font-weight: 600;
+        }
+
+        .text-success {
+            color: var(--md-sys-color-success) !important;
+            font-weight: 600;
+        }
+
+        select {
+            width: 100%;
+            height: 42px;
+            background-color: var(--md-sys-color-surface);
+            border: 1px solid var(--md-sys-color-outline-variant);
+            border-radius: 12px;
+            padding: 0 28px 0 10px;
+            font-size: 12px;
+            color: var(--md-sys-color-on-surface);
+            outline: none;
+            text-align: left;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2344474f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 14px;
+        }
+
+        select:focus {
+            border-color: var(--md-sys-color-primary);
+            border-width: 2px;
+            padding: 0 27px 0 9px;
+        }
+
+        .hero-card {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-on-primary-container);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .hero-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .hero-value {
+            font-size: 32px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        [data-theme="dark"] .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .stat-val {
+            font-size: 15px;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--md-sys-color-outline-variant);
+            color: var(--md-sys-color-on-surface);
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <!-- Кнопка теми зліва -->
+            <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">🌙</button>
+            
+            <!-- Назва по центру -->
+            <div class="app-title">ПТРК - Nemesis</div>
+
+            <!-- Зовнішній файл logo.png -->
+            <img src="logo.png" class="app-logo" alt="Логотип Ведмідь і Дрон">
+        </div>
+
+        <div class="content-body">
+            <!-- 1. Параметри АКБ -->
+            <div class="section">
+                <div class="section-title">1. параметри АКБ</div>
+                
+                <div class="row-inputs-3 input-group">
+                    <div>
+                        <label>тип</label>
+                        <select id="batteryType" onchange="onBatteryTypeChange()">
+                            <option value="lipo" selected>Li-Po</option>
+                            <option value="lihv">LiHV</option>
+                            <option value="solid">Solid State</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>ємність (mAh)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="batteryCapacity" value="75000" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div>
+                        <label>вага (кг)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="batteryWeight" value="12.7" step="0.1" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group" style="margin-top: 10px;">
+                    <div class="grid-3">
+                        <div>
+                            <label>комірки (S)</label>
+                            <div class="input-wrapper" title="Кількість комірок">
+                                <input type="number" id="cellConfig1" value="12" step="1" oninput="calculate()">
+                            </div>
+                        </div>
+                        <div>
+                            <label>номінал (V)</label>
+                            <div class="input-wrapper" title="Номінальна напруга ячейки">
+                                <input type="number" id="cellConfig2" value="4.2" step="0.01" oninput="calculate()">
+                            </div>
+                        </div>
+                        <div>
+                            <label>напруга АКБ (V)</label>
+                            <div class="input-wrapper" title="Мін/Макс математична напруга АКБ" style="justify-content: center; gap: 4px;">
+                                <span id="packMinVal" class="text-error" style="font-size: 12px;">38.0</span>
+                                <span style="color: var(--md-sys-color-outline);">/</span>
+                                <span id="packMaxVal" class="text-success" style="font-size: 12px;">50.4</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Час роботи АКБ -->
+            <div class="section">
+                <div class="section-title">2. час роботи АКБ</div>
+                <div class="row-inputs input-group">
+                    <div>
+                        <label>макс навантаження (хв)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="timeMaxLoad" value="33" step="0.1" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div>
+                        <label>без ваги (хв)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="timeNoLoad" value="43" step="0.1" oninput="calculate()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Польотні параметри -->
+            <div class="section">
+                <div class="section-title">3. польотні параметри</div>
+                <div class="row-inputs-3 input-group">
+                    <div>
+                        <label>швидкість</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="speedInput" value="54" step="1" oninput="calculate()">
+                            <select id="speedUnit" class="speed-unit-select" onchange="onSpeedUnitChange()">
+                                <option value="kmh" selected>км/г</option>
+                                <option value="ms">м/с</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label>вантаж (кг)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="currentPayload" value="10" step="0.1" oninput="calculate()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-error">АКБ (+кг)</label>
+                        <div class="input-wrapper" style="border-color: var(--md-sys-color-error);">
+                            <span id="excessBatteryVal" class="text-error" style="font-size: 13px; font-weight: 500;">0.0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Результати -->
+            <div class="hero-card">
+                <div class="hero-title">максимальна дальність</div>
+                <div class="hero-value" id="maxDistanceVal" style="margin-bottom: 0;">29.70 км</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">максимальний час</div>
+                        <div class="stat-val" id="maxTimeVal">33 хв</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">радіус (туди й назад)</div>
+                        <div class="stat-val" id="radiusVal">14.85 км</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="reset-btn" onclick="resetDefaults()">скинути налаштування</button>
+        </div>
+    </div>
+
+    <script>
+        let baseMaxPayloadKg = 10;
+        let currentSpeedUnit = 'kmh';
+
+        function toggleTheme() {
+            const body = document.body;
+            const toggleBtn = document.getElementById('themeToggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                toggleBtn.textContent = '🌙';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                toggleBtn.textContent = '☀️';
+            }
+        }
+
+        function onBatteryTypeChange() {
+            let type = document.getElementById('batteryType').value;
+            let voltageInput = document.getElementById('cellConfig2');
+
+            if (type === 'lipo') {
+                voltageInput.value = '4.2';
+            } else if (type === 'lihv') {
+                voltageInput.value = '4.35';
+            } else if (type === 'solid') {
+                voltageInput.value = '4.45';
+            }
+            calculate();
+        }
+
+        function onSpeedUnitChange() {
+            let newUnit = document.getElementById('speedUnit').value;
+            let speedInput = document.getElementById('speedInput');
+            let val = parseFloat(speedInput.value) || 0;
+
+            if (currentSpeedUnit === 'kmh' && newUnit === 'ms') {
+                speedInput.value = Math.round(val / 3.6);
+            } else if (currentSpeedUnit === 'ms' && newUnit === 'kmh') {
+                speedInput.value = Math.round(val * 3.6);
+            }
+
+            currentSpeedUnit = newUnit;
+            calculate();
+        }
+
+        function calculate() {
+            let capacity = parseFloat(document.getElementById('batteryCapacity').value) || 75000;
+            let batteryWeightKg = parseFloat(document.getElementById('batteryWeight').value) || 12.7;
+            
+            let cells = parseFloat(document.getElementById('cellConfig1').value) || 12;
+            let cellVolt = parseFloat(document.getElementById('cellConfig2').value) || 4.2;
+            let type = document.getElementById('batteryType').value;
+
+            let minCellVolt = 3.17;
+            if (type === 'lihv') {
+                minCellVolt = 3.25;
+            } else if (type === 'solid') {
+                minCellVolt = 3.33;
+            }
+
+            let minPackVoltage = cells * minCellVolt;
+            let maxPackVoltage = cells * cellVolt;
+
+            document.getElementById('packMinVal').textContent = minPackVoltage.toFixed(1);
+            document.getElementById('packMaxVal').textContent = maxPackVoltage.toFixed(1);
+
+            let excessBattery = batteryWeightKg - 12.7;
+            document.getElementById('excessBatteryVal').textContent = excessBattery.toFixed(1);
+
+            let batteryWeightFactor = batteryWeightKg / 12.7;
+            let capacityFactor = capacity / 75000;
+
+            let rawSpeed = parseFloat(document.getElementById('speedInput').value) || 54;
+            let speedKmh = currentSpeedUnit === 'ms' ? rawSpeed * 3.6 : rawSpeed;
+
+            let timeMaxLoad = parseFloat(document.getElementById('timeMaxLoad').value) || 33;
+            let timeNoLoad = parseFloat(document.getElementById('timeNoLoad').value) || 43;
+
+            let payloadKg = parseFloat(document.getElementById('currentPayload').value) || 0;
+
+            let effectivePayload = payloadKg + excessBattery;
+
+            let weightRatio = Math.max(0, effectivePayload / baseMaxPayloadKg);
+            let baseFlightTimeMinutes = timeNoLoad - (timeNoLoad - timeMaxLoad) * weightRatio;
+            
+            let flightTimeMinutes = baseFlightTimeMinutes * capacityFactor / Math.max(0.1, batteryWeightFactor);
+            if (flightTimeMinutes < 0) flightTimeMinutes = 0;
+
+            let flightTimeHours = flightTimeMinutes / 60;
+            let maxDistanceKm = speedKmh * flightTimeHours;
+            let radiusKm = maxDistanceKm / 2;
+
+            let roundedMins = Math.round(flightTimeMinutes);
+
+            document.getElementById('maxDistanceVal').textContent = maxDistanceKm.toFixed(2) + ' км';
+            document.getElementById('maxTimeVal').textContent = `${roundedMins} хв`;
+            document.getElementById('radiusVal').textContent = radiusKm.toFixed(2) + ' км';
+        }
+
+        function resetDefaults() {
+            document.getElementById('batteryType').value = 'lipo';
+            document.getElementById('cellConfig1').value = '12';
+            document.getElementById('cellConfig2').value = '4.2';
+            document.getElementById('batteryCapacity').value = '75000';
+            document.getElementById('batteryWeight').value = '12.7';
+            document.getElementById('timeMaxLoad').value = '33';
+            document.getElementById('timeNoLoad').value = '43';
+            document.getElementById('speedInput').value = '54';
+            document.getElementById('speedUnit').value = 'kmh';
+            currentSpeedUnit = 'kmh';
+            document.getElementById('currentPayload').value = '10';
+            calculate();
+        }
+
+        window.onload = function() {
+            calculate();
+        };
+    </script>
+    
+        <script>
+        // Реєстрація Service Worker для PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker успішно зареєстровано!', reg))
+                    .catch(err => console.log('Помилка реєстрації Service Worker:', err));
+            });
+        }
+    </script>
+
+    
+</body>
+</html>
